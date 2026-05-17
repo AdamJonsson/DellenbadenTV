@@ -1,0 +1,12 @@
+{
+  "name": "dellenbaden-tv",
+  "version": "1.0.0",
+  "description": "TV display for Dellenbaden cafe – programs and ice cream menu",
+  "scripts": {
+    "fetch": "node scripts/fetch-data.js",
+    "start": "npx serve docs -l 3000"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "slideDuration": 15000,
+  "transitionDuration": 1200,
+  "programsToShow": 12,
+  "iceCreamInterval": 4,
+  "futureDaysLimit": 120,
+  "imageRotations": {
+    "20231119_113030060_iOS.jpg": 0,
+    "jollen.jpg": -90,
+    "Vega.jpg": -90
+  }
+}

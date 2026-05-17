@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dellenbaden</title>
+<style>
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *:before, *:after {
+  margin: 0; padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+body {
+  font-family: Georgia, "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Stage ─────────────────────────────────────────────────── */
+#stage {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  -webkit-transition: opacity 1.2s ease-in-out;
+  -moz-transition:    opacity 1.2s ease-in-out;
+  -o-transition:      opacity 1.2s ease-in-out;
+  transition:         opacity 1.2s ease-in-out;
+}
+
+/* ── Background image ──────────────────────────────────────── */
+#bg-wrapper {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+}
+#bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #0a0e1a;
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Ken Burns slow zoom – plays for the entire slide duration  */
+@-webkit-keyframes kb {
+  from { -webkit-transform: scale(1);    transform: scale(1); }
+  to   { -webkit-transform: scale(1.07); transform: scale(1.07); }
+}
+@keyframes kb {
+  from { -webkit-transform: scale(1);    transform: scale(1); }
+  to   { -webkit-transform: scale(1.07); transform: scale(1.07); }
+}
+#bg.animate {
+  -webkit-animation: kb 20s ease-out forwards;
+  animation:         kb 20s ease-out forwards;
+}
+
+/* Fallback gradients when there is no image */
+#bg.type-program {
+  background-image: -webkit-linear-gradient(135deg, #0d1b3e 0%, #091026 55%, #150824 100%);
+  background-image:         linear-gradient(135deg, #0d1b3e 0%, #091026 55%, #150824 100%);
+}
+#bg.type-menu {
+  background-image: -webkit-linear-gradient(135deg, #2a1508 0%, #180e04 55%, #0e1a0a 100%);
+  background-image:         linear-gradient(135deg, #2a1508 0%, #180e04 55%, #0e1a0a 100%);
+}
+
+/* ── Gradient overlay ──────────────────────────────────────── */
+#overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 70%;
+  background: -webkit-linear-gradient(top, transparent 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.92) 100%);
+  background:         linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.92) 100%);
+}
+
+/* ── Content block ─────────────────────────────────────────── */
+#content {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 0 7% 7%;
+}
+
+.badge {
+  display: inline-block;
+  font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+  font-size: 1.1vw;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.35em 1em;
+  border-radius: 2px;
+  margin-bottom: 1.4em;
+  border: 1px solid;
+}
+.badge.program {
+  color: #a8c4f0;
+  border-color: rgba(168,196,240,0.45);
+  background: rgba(60,100,180,0.18);
+}
+.badge.menu {
+  color: #e8c97a;
+  border-color: rgba(232,201,122,0.45);
+  background: rgba(180,120,30,0.18);
+}
+
+#title {
+  font-size: 5vw;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.45em;
+  text-shadow: 0 3px 18px rgba(0,0,0,0.7);
+  max-width: 70%;
+}
+
+#subtitle {
+  font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+  font-size: 4vw;
+  font-weight: 400;
+  color: #e8c97a;
+  margin-bottom: 0.7em;
+  letter-spacing: 0.02em;
+}
+#subtitle.program-date { color: #a8c4f0; }
+#subtitle.menu-price   { color: #e8c97a; }
+
+#description {
+  font-size: 1.7vw;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.68);
+  max-width: 52%;
+}
+
+/* ── Wordmark ───────────────────────────────────────────────── */
+#wordmark {
+  position: absolute;
+  top: 5.5%;
+  right: 5.5%;
+  height: 5vw;
+  width: auto;
+  opacity: 0.85;
+}
+
+/* ── Slide counter ──────────────────────────────────────────── */
+#counter {
+  position: absolute;
+  top: 5.5%;
+  left: 5.5%;
+  font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+  font-size: 1vw;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.08em;
+}
+
+/* ── Progress bar ───────────────────────────────────────────── */
+#progress-track {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+}
+#progress-fill {
+  height: 100%;
+  width: 0%;
+  background: rgba(255,255,255,0.7);
+  /* transition is set via JS so duration matches config */
+}
+
+/* ── Error / loading state ──────────────────────────────────── */
+#loading {
+  position: fixed;
+  top: 50%; left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform:         translate(-50%, -50%);
+  font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+  font-size: 1.4vw;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div id="loading">Laddar&hellip;</div>
+
+<div id="stage" style="opacity:0">
+  <div id="bg-wrapper">
+    <div id="bg" class="type-program animate"></div>
+  </div>
+  <div id="overlay"></div>
+
+  <img id="wordmark" src="images/Dellenbaden.png" alt="Dellenbaden">
+  <div id="counter"></div>
+
+  <div id="content">
+    <span class="badge program" id="badge">Program</span>
+    <h1 id="title"></h1>
+    <p  id="subtitle" class="program-date"></p>
+    <p  id="description"></p>
+  </div>
+
+  <div id="progress-track">
+    <div id="progress-fill"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Default config (overridden by config.json) ──── */
+  var cfg = {
+    slideDuration      : 8000,
+    transitionDuration : 1200,
+    programsToShow     : 12,
+    iceCreamInterval   : 3,
+    futureDaysLimit    : 120
+  };
+
+  /* ── DOM refs ────────────────────────────────────── */
+  var stage     = document.getElementById('stage');
+  var bgWrapper = document.getElementById('bg-wrapper');
+  var bg        = document.getElementById('bg');
+  var badge     = document.getElementById('badge');
+  var titleEl  = document.getElementById('title');
+  var subtitle = document.getElementById('subtitle');
+  var desc     = document.getElementById('description');
+  var counter  = document.getElementById('counter');
+  var fill     = document.getElementById('progress-fill');
+  var loading  = document.getElementById('loading');
+
+  /* ── Feature detection ───────────────────────────── */
+  var hasCssTransition = (function () {
+    var el = document.createElement('div');
+    return 'transition' in el.style || 'webkitTransition' in el.style;
+  }());
+
+  var hasCssAnimation = (function () {
+    var el = document.createElement('div');
+    return 'animation' in el.style || 'webkitAnimation' in el.style;
+  }());
+
+  /* ── State ───────────────────────────────────────── */
+  var playlist = [];
+  var idx      = 0;
+  var timer    = null;
+
+  /* ── XHR helper ──────────────────────────────────── */
+  function loadJson(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status === 200) {
+        try { cb(null, JSON.parse(xhr.responseText)); }
+        catch (e) { cb(e, null); }
+      } else {
+        cb(new Error('HTTP ' + xhr.status), null);
+      }
+    };
+    xhr.send();
+  }
+
+  /* ── Date formatter ──────────────────────────────── */
+  var DAYS   = ['Söndag','Måndag','Tisdag','Onsdag','Torsdag','Fredag','Lördag'];
+  var MONTHS = ['januari','februari','mars','april','maj','juni',
+                'juli','augusti','september','oktober','november','december'];
+
+  function formatDate(isoDate, time) {
+    try {
+      var d = new Date(isoDate);
+      var s = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
+      if (time) s += '  ·  ' + time;
+      return s;
+    } catch (e) { return ''; }
+  }
+
+  /* ── Playlist builder ────────────────────────────── */
+  function buildPlaylist(programs, menuItems) {
+    var list    = [];
+    var menuIdx = 0;
+    var count   = Math.min(programs.length, cfg.programsToShow);
+
+    for (var i = 0; i < count; i++) {
+      list.push({ type: 'program', data: programs[i] });
+      if (menuItems.length > 0 && (i + 1) % cfg.iceCreamInterval === 0) {
+        list.push({ type: 'menu', data: menuItems[menuIdx % menuItems.length] });
+        menuIdx++;
+      }
+    }
+
+    /* If no programs at all, cycle through entire menu */
+    if (count === 0) {
+      for (var j = 0; j < menuItems.length; j++) {
+        list.push({ type: 'menu', data: menuItems[j] });
+      }
+    }
+
+    return list;
+  }
+
+  /* ── Progress bar ────────────────────────────────── */
+  function resetProgress() {
+    fill.style.webkitTransition = 'none';
+    fill.style.transition       = 'none';
+    fill.style.width            = '0%';
+    /* Force reflow so the reset takes effect before we re-enable the transition */
+    void fill.offsetWidth;
+    var durSec = (cfg.slideDuration + cfg.transitionDuration) / 1000;
+    fill.style.webkitTransition = 'width ' + durSec + 's linear';
+    fill.style.transition       = 'width ' + durSec + 's linear';
+    fill.style.width            = '100%';
+  }
+
+  /* ── Ken Burns reset ─────────────────────────────── */
+  function restartKenBurns() {
+    if (!hasCssAnimation) return;
+    bg.className = bg.className.replace(/\s*animate\s*/g, ' ').trim();
+    void bg.offsetWidth; // force reflow
+    bg.className += ' animate';
+  }
+
+  /* ── Apply slide content ─────────────────────────── */
+  function applySlide(item) {
+    var isProgram = item.type === 'program';
+    var data      = item.data;
+
+    /* Background */
+    var typeClass = isProgram ? 'type-program' : 'type-menu';
+    bg.className  = typeClass;
+    if (data.imageUrl) {
+      bg.style.backgroundImage = 'url("' + data.imageUrl + '")';
+    } else {
+      bg.style.backgroundImage = '';
+    }
+
+    /* Image rotation (configured per filename in config.json imageRotations) */
+    var rotation = 0;
+    if (data.imageUrl && cfg.imageRotations) {
+      var filename = decodeURIComponent(data.imageUrl.split('/').pop());
+      rotation = cfg.imageRotations[filename] || 0;
+    }
+    if (rotation) {
+      var scale = (rotation % 180 !== 0)
+        ? Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth)
+        : 1;
+      var xform = 'rotate(' + rotation + 'deg) scale(' + scale + ')';
+      bgWrapper.style.webkitTransform = xform;
+      bgWrapper.style.transform       = xform;
+    } else {
+      bgWrapper.style.webkitTransform = '';
+      bgWrapper.style.transform       = '';
+    }
+
+    /* Badge */
+    badge.className   = 'badge ' + (isProgram ? 'program' : 'menu');
+    badge.textContent = isProgram ? 'Program' : 'Glassbar';
+
+    /* Title */
+    titleEl.textContent = isProgram
+      ? (data.title || data.dateText || '')
+      : (data.name  || '');
+
+    /* Subtitle */
+    subtitle.className   = 'program-date';
+    if (isProgram) {
+      subtitle.textContent = formatDate(data.date, data.time);
+      subtitle.className   = 'program-date';
+    } else {
+      subtitle.textContent = data.price || '';
+      subtitle.className   = 'menu-price';
+    }
+
+    /* Description */
+    desc.textContent = data.description || '';
+
+    /* Counter */
+    counter.textContent = (idx + 1) + ' / ' + playlist.length;
+
+    /* Ken Burns */
+    restartKenBurns();
+  }
+
+  /* ── Show a slide ────────────────────────────────── */
+  function showSlide(i) {
+    if (playlist.length === 0) return;
+
+    var item = playlist[i];
+
+    if (hasCssTransition) {
+      stage.style.opacity = '0';
+      timer = setTimeout(function () {
+        applySlide(item);
+        stage.style.opacity = '1';
+        resetProgress();
+        timer = setTimeout(advance, cfg.slideDuration);
+      }, cfg.transitionDuration);
+    } else {
+      applySlide(item);
+      resetProgress();
+      timer = setTimeout(advance, cfg.slideDuration);
+    }
+  }
+
+  function advance() {
+    idx = (idx + 1) % playlist.length;
+    showSlide(idx);
+  }
+
+  /* ── Bootstrap ───────────────────────────────────── */
+  function start(programs, menuItems) {
+    loading.style.display = 'none';
+    playlist = buildPlaylist(programs, menuItems);
+
+    if (playlist.length === 0) {
+      loading.style.display = 'block';
+      loading.textContent   = 'Inga program hittades. Kör npm run fetch.';
+      return;
+    }
+
+    idx = 0;
+    applySlide(playlist[0]);
+    stage.style.opacity = '1';
+    resetProgress();
+    timer = setTimeout(advance, cfg.slideDuration);
+  }
+
+  function init(programs, menuItems) {
+    start(programs, menuItems);
+  }
+
+  /* ── Load data files ─────────────────────────────── */
+  loadJson('config.json', function (err, data) {
+    if (!err && data) {
+      for (var k in data) {
+        if (data.hasOwnProperty(k)) cfg[k] = data[k];
+      }
+    }
+
+    var programs  = [];
+    var menuItems = [];
+    var pending   = 2;
+
+    function onDone() {
+      pending--;
+      if (pending === 0) init(programs, menuItems);
+    }
+
+    loadJson('data/programs.json', function (err, data) {
+      if (!err && Array.isArray(data)) programs = data;
+      onDone();
+    });
+
+    loadJson('data/menu.json', function (err, data) {
+      if (!err && Array.isArray(data)) menuItems = data;
+      onDone();
+    });
+  });
+
+}());
+</script>
+</body>
+</html>
