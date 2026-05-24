@@ -4,6 +4,7 @@
   "description": "TV display for Dellenbaden cafe – programs and ice cream menu",
   "scripts": {
     "fetch": "node scripts/fetch-data.js",
+    "resize": "node scripts/resize-images.js",
     "start": "npx serve docs -l 3000"
   },
   "dependencies": {

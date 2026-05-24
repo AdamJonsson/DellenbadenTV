@@ -3,17 +3,17 @@
     "name": "Jollen",
     "description": "Barnbägare med 2 små kulor glass, strössel, hallonbåtar, kex och dekoration. Du får även välja mellan en frisbee eller badboll för sommarens lek.",
     "price": "51 kr",
-    "imageUrl": "https://impro.usercontent.one/appid/oneComWsb/domain/dellenbaden.se/media/dellenbaden.se/onewebmedia/glassmeny/jollen.jpg"
+    "imageUrl": "images/jollen.jpg"
   },
   {
     "name": "M/S Vega(n)",
-    "description": "Vega är alternativet för dig som vill undvika mjölkprodukter men ändå är sugen på glass. Välj 3 valfria kulor ur vårt mjölkfria sortiment. Veganska lättsaltade chips bildar fribord runt skeppet. Toppa med valfri topping – och en vindflöjel ingår i aktern.",
+    "description": "3 kulor ur vårt mjölkfria sortiment. Veganska chips bildar fribord, valfri topping och en vindflöjel i aktern.",
     "price": "52 kr",
     "imageUrl": "images/Vega.jpg"
   },
   {
     "name": "Ekan",
-    "description": "Söker du lite lugn och \"ro\"? Då är Ekan ett självklart val! I ett frasigt, kexigt skrov väljer du 2 kulor glass efter egen smak. Högst däruppe hänger en klick grädde likt en enda stor molntapp, dekorerad med valfritt strössel. Ett par åror av vaniljrån hjälper dig att ro din glass hela vägen hem.",
+    "description": "2 kulor glass i ett frasigt kexskrov, toppat med grädde och valfritt strössel. Åror av vaniljrån ingår.",
     "price": "67 kr",
     "imageUrl": "images/4417f45a-6ab8-4462-a51b-fa4535e8e420.jpeg"
   },
@@ -25,31 +25,31 @@
   },
   {
     "name": "Columbus",
-    "description": "Likt Columbus hjälper vi dig till nya smakupplevelser! I lastutrymmet trängs 3 kulor valfri glass och mjukglass håller utkik. Över skeppet pudrar vi chilipulver och cayennepeppar – ett riktigt hett sommarminne. Vågar du testa?",
+    "description": "3 kulor glass med mjukglass, chilipulver och cayennepeppar. Vågar du testa?",
     "price": "87 kr",
     "imageUrl": "images/23413b12-5355-47fe-8f7c-688fb95fc077.jpeg"
   },
   {
     "name": "Vraket Hannah",
-    "description": "Hannah förliste vid Dellenbaden 2023 och har blivit en turistattraktion. På en sandig botten av krossade digestivekex vilar 3 kulor glass, omgivet av vrakdelar i form av salta årpinnar och ett våfflat segel. Utmärkt med valfri topping eller strössel.",
+    "description": "3 kulor glass på en botten av krossade digestivekex, med salta årpinnar och ett våfflat segel. Valfri topping.",
     "price": "86 kr",
     "imageUrl": "images/hannah.jpeg"
   },
   {
     "name": "Lyxkryssare",
-    "description": "Här är glassen för den kräsne. Kölen av banan göms under 10 kulor glass. Som kronan på verket hittar vi såväl grädde, topping, strössel samt skorstenar av kex. Vi råder dig att ta god tid på dig för att navigera Lyxkryssaren rätt. Den kräver ett visst djup för att få plats!",
+    "description": "10 kulor glass på en banan med grädde, topping, strössel och skorstenar av kex.",
     "price": "186 kr",
     "imageUrl": "images/lyxkryssare.JPG"
   },
   {
     "name": "Ost-indiefarare",
-    "description": "3 valfria kulor glass bildar ett smakrikt skrov som skyddas av en rymlig överbyggnad i mjukglass. Barlasten består av en riklig mängd ostkrokar som gör skutan redo för vida vatten. Låt den hålla god fart in i hamn innan skeppsråttorna tar över!",
+    "description": "3 kulor glass med mjukglass och en riklig mängd ostkrokar.",
     "price": "87 kr",
     "imageUrl": "images/ostidienfarare.JPG"
   },
   {
     "name": "Isbrytare",
-    "description": "Isbrytaren kan med fördel användas för att få samtalet att lossna om det börjar kännas frostigt kring bordet. Inför denna sommar har vår Isbrytare varit inne för en genomgående upprustning. Vad sägs om: 2 bananer, inte mindre än 19 (!) kulor glass omgivna av grädde, strössel och topping. Dela den med en vän eller gör som många gjort tidigare - försök att sluka den helt själv!",
+    "description": "2 bananer och 19 kulor glass med grädde, strössel och topping. Dela med en vän – eller utmana dig själv!",
     "price": "312 kr",
     "imageUrl": "images/isbrytare.JPG"
   }
