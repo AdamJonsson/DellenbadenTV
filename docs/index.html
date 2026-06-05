@@ -155,9 +155,9 @@ body {
 /* ── Wordmark ───────────────────────────────────────────────── */
 #wordmark {
   position: absolute;
-  top: 5.5%;
+  bottom: 5.5%;
   right: 5.5%;
-  height: 5vw;
+  height: 100px;
   width: auto;
   opacity: 0.85;
 }
@@ -205,15 +205,16 @@ body {
   display: none;
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
+  /* per-sponsor padding applied via JS (data.padding) */
 }
 #sponsor-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform:         translate(-50%, -50%);
-  max-width: 65%;
-  max-height: 55%;
+  display: block;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -o-object-position: center;
+  object-position: center;
 }
 
 /* ── Error / loading state ──────────────────────────────────── */
@@ -241,7 +242,7 @@ body {
   <div id="sponsor-bg"></div>
   <div id="overlay"></div>
   <div id="sponsor-logo-wrapper">
-    <img id="sponsor-logo" src="" alt="">
+    <img id="sponsor-logo" src="" alt=""/>
   </div>
 
   <img id="wordmark" src="images/Dellenbaden.png" alt="Dellenbaden">
@@ -371,6 +372,13 @@ body {
       count > 0 ? 1 : menuItems.length
     );
 
+    /* Round up to a multiple of sponsors.length so every sponsor
+       appears exactly the same number of times per full rotation */
+    if (sponsors.length > 0) {
+      var rem = contentSlots % sponsors.length;
+      if (rem !== 0) contentSlots += (sponsors.length - rem);
+    }
+
     var list = [], progIdx = 0, menuIdx = 0, sponsorIdx = 0, progSeen = 0;
 
     for (var i = 0; i < contentSlots; i++) {
@@ -442,8 +450,11 @@ body {
          leaving #sponsor-bg — a plain div with no transforms — to carry
          the solid background colour reliably on any engine. */
       bgWrapper.style.display         = 'none';
-      sponsorBg.style.backgroundColor = data.background || '#ffffff';
       sponsorBg.style.display         = 'block';
+      void sponsorBg.offsetWidth;     /* force reflow — old WebKit silently drops style
+                                         assignments on display:none elements; this flush
+                                         commits the display change before we set the color */
+      sponsorBg.style.backgroundColor = data.background || '#ffffff';
     } else {
       /* Restore the photo/gradient layer */
       bgWrapper.style.display  = '';
@@ -481,12 +492,13 @@ body {
 
     /* ── Sponsor logo ── */
     if (isSponsor) {
-      sponsorLogo.src                  = data.imageUrl || '';
-      sponsorLogo.alt                  = data.name    || '';
-      sponsorLogoWrapper.style.display = 'block';
+      sponsorLogo.src                   = data.imageUrl || '';
+      sponsorLogo.alt                   = data.name     || '';
+      sponsorLogoWrapper.style.padding  = data.padding  || '0';
+      sponsorLogoWrapper.style.display  = 'block';
     } else {
-      sponsorLogoWrapper.style.display = 'none';
-      sponsorLogo.src                  = '';
+      sponsorLogoWrapper.style.display  = 'none';
+      sponsorLogo.src                   = '';
     }
 
     /* ── Content block: hidden for sponsor slides ── */

@@ -1,6 +1,6 @@
 {
   "slideDuration": 2000,
-  "transitionDuration": 200,
+  "transitionDuration": 500,
   "programsToShow": 12,
   "iceCreamInterval": 4,
   "futureDaysLimit": 21,

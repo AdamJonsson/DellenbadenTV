@@ -1,52 +1,74 @@
 [
   {
     "name": "Sponsor",
-    "imageUrl": "images/Sponsors/1000013895.png",
-    "background": "#ffffff"
+    "imageUrl": "images/Sponsors/Monitor.jpg",
+    "background": "#ffffff",
+    "padding": "200px"
   },
   {
     "name": "Sponsor",
-    "imageUrl": "images/Sponsors/1000014911.png",
-    "background": "#ffffff"
+    "imageUrl": "images/Sponsors/SvenskaKyrkan.png",
+    "background": "#ffffff",
+    "padding": "200px"
   },
   {
-    "name": "Betel",
-    "imageUrl": "images/Sponsors/Betel2.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/Rasjo.png",
+    "background": "#ffffff",
+    "padding": "200px"
   },
   {
-    "name": "Filadelfia Delsbo",
-    "imageUrl": "images/Sponsors/cropped-filadelfia-delsbo-logo.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/JDGolv.png",
+    "background": "#ffffff",
+    "padding": "200px"
   },
   {
-    "name": "Delsbo",
-    "imageUrl": "images/Sponsors/Delsbo.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/GravVerkstad.png",
+    "background": "#ffffff",
+    "padding": "50px"
   },
   {
-    "name": "Elim & Saron",
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/Filadelfia.png",
+    "background": "#ffffff",
+    "padding": "200px"
+  },
+  {
+    "name": "Sponsor",
     "imageUrl": "images/Sponsors/ElimSaron.png",
-    "background": "#ffffff"
+    "background": "#ffffff",
+    "padding": "200px"
   },
   {
-    "name": "JD Golv & Måleri",
-    "imageUrl": "images/Sponsors/JD GOLV & MÅLERI LOGO.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/DelsboByarad.png",
+    "background": "#ffffff",
+    "padding": "200px"
   },
   {
-    "name": "Rasjo",
-    "imageUrl": "images/Sponsors/Rasjo stående.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/BjurakersBaptistforsamling.png",
+    "background": "#ffffff",
+    "padding": "150px"
   },
   {
-    "name": "Svenska Kyrkan Delsbo",
-    "imageUrl": "images/Sponsors/Svk_Del_logo_office_pos_RGB.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/PORadio.jpg",
+    "background": "#ffffff",
+    "padding": "0px"
   },
   {
-    "name": "VVS",
-    "imageUrl": "images/Sponsors/VVS.png",
-    "background": "#ffffff"
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/Mallassas.png",
+    "background": "#000000",
+    "padding": "100px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/DellenbygdensVVS.png",
+    "background": "#ffffff",
+    "padding": "100px"
   }
 ]
