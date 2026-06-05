@@ -28,10 +28,10 @@ body {
 #stage {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  -webkit-transition: opacity 1.2s ease-in-out;
-  -moz-transition:    opacity 1.2s ease-in-out;
-  -o-transition:      opacity 1.2s ease-in-out;
-  transition:         opacity 1.2s ease-in-out;
+  -webkit-transition: opacity 0.8s ease-in-out;
+  -moz-transition:    opacity 0.8s ease-in-out;
+  -o-transition:      opacity 0.8s ease-in-out;
+  transition:         opacity 0.8s ease-in-out;
 }
 
 /* ── Background image ──────────────────────────────────────── */
@@ -41,6 +41,13 @@ body {
   overflow: hidden;
   -webkit-transform-origin: center center;
   transform-origin: center center;
+  /* GPU layer promotion lives here — static, never animated.
+     This means #bg can run a plain scale() animation with no
+     transform conflicts, which old WebKit handles reliably. */
+  -webkit-transform: translateZ(0);
+  transform:         translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility:         hidden;
 }
 #bg {
   position: absolute;
@@ -49,19 +56,16 @@ body {
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #0a0e1a;
-  -webkit-transform-origin: center center;
-  transform-origin: center center;
-  will-change: transform;
 }
 
-/* Ken Burns slow zoom – plays for the entire slide duration  */
+/* Ken Burns slow zoom — plain scale() with webkit prefix for old TV browsers */
 @-webkit-keyframes kb {
   from { -webkit-transform: scale(1);    transform: scale(1); }
-  to   { -webkit-transform: scale(1.07); transform: scale(1.07); }
+  to   { -webkit-transform: scale(1.06); transform: scale(1.06); }
 }
 @keyframes kb {
   from { -webkit-transform: scale(1);    transform: scale(1); }
-  to   { -webkit-transform: scale(1.07); transform: scale(1.07); }
+  to   { -webkit-transform: scale(1.06); transform: scale(1.06); }
 }
 #bg.animate {
   -webkit-animation: kb 20s ease-out forwards;
@@ -116,6 +120,11 @@ body {
   border-color: rgba(232,201,122,0.45);
   background: rgba(180,120,30,0.18);
 }
+.badge.sponsor {
+  color: #a8e6c0;
+  border-color: rgba(168,230,192,0.45);
+  background: rgba(30,130,70,0.18);
+}
 
 #title {
   font-size: 100px;
@@ -123,7 +132,6 @@ body {
   line-height: 1;
   letter-spacing: -0.01em;
   margin-bottom: 0px;
-  text-shadow: 0 3px 18px rgba(0,0,0,0.7);
   max-width: 70%;
 }
 
@@ -174,9 +182,38 @@ body {
 }
 #progress-fill {
   height: 100%;
-  width: 0%;
+  width: 100%;                       /* always full width — scaled via transform */
   background: rgba(255,255,255,0.7);
+  -webkit-transform: scaleX(0);
+  transform:         scaleX(0);
+  -webkit-transform-origin: left center;
+  transform-origin:         left center;
   /* transition is set via JS so duration matches config */
+}
+
+/* ── Sponsor background ─────────────────────────────────────── */
+/* Sits OUTSIDE the GPU compositing layer (#bg-wrapper) so that
+   a plain background-color is reliably painted on old WebKit. */
+#sponsor-bg {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+/* ── Sponsor logo ───────────────────────────────────────────── */
+#sponsor-logo-wrapper {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+#sponsor-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform:         translate(-50%, -50%);
+  max-width: 65%;
+  max-height: 55%;
 }
 
 /* ── Error / loading state ──────────────────────────────────── */
@@ -201,7 +238,11 @@ body {
   <div id="bg-wrapper">
     <div id="bg" class="type-program animate"></div>
   </div>
+  <div id="sponsor-bg"></div>
   <div id="overlay"></div>
+  <div id="sponsor-logo-wrapper">
+    <img id="sponsor-logo" src="" alt="">
+  </div>
 
   <img id="wordmark" src="images/Dellenbaden.png" alt="Dellenbaden">
   <div id="counter"></div>
@@ -225,33 +266,46 @@ body {
   /* ── Default config (overridden by config.json) ──── */
   var cfg = {
     slideDuration      : 8000,
-    transitionDuration : 1200,
+    transitionDuration : 800,
     programsToShow     : 12,
-    iceCreamInterval   : 3,
-    futureDaysLimit    : 120
+    iceCreamInterval   : 3,    /* show a menu slide after every N program slides */
+    futureDaysLimit    : 21,
+    refreshInterval    : 7200  /* auto-reload page after this many seconds; 0 = off */
   };
 
   /* ── DOM refs ────────────────────────────────────── */
-  var stage     = document.getElementById('stage');
-  var bgWrapper = document.getElementById('bg-wrapper');
-  var bg        = document.getElementById('bg');
-  var badge     = document.getElementById('badge');
-  var titleEl  = document.getElementById('title');
-  var subtitle = document.getElementById('subtitle');
-  var desc     = document.getElementById('description');
-  var counter  = document.getElementById('counter');
-  var fill     = document.getElementById('progress-fill');
-  var loading  = document.getElementById('loading');
+  var stage               = document.getElementById('stage');
+  var bgWrapper           = document.getElementById('bg-wrapper');
+  var bg                  = document.getElementById('bg');
+  var sponsorBg           = document.getElementById('sponsor-bg');
+  var overlay             = document.getElementById('overlay');
+  var sponsorLogoWrapper  = document.getElementById('sponsor-logo-wrapper');
+  var sponsorLogo         = document.getElementById('sponsor-logo');
+  var wordmark            = document.getElementById('wordmark');
+  var content             = document.getElementById('content');
+  var badge               = document.getElementById('badge');
+  var titleEl             = document.getElementById('title');
+  var subtitle            = document.getElementById('subtitle');
+  var desc                = document.getElementById('description');
+  var counter             = document.getElementById('counter');
+  var fill                = document.getElementById('progress-fill');
+  var loading             = document.getElementById('loading');
 
   /* ── Feature detection ───────────────────────────── */
   var hasCssTransition = (function () {
     var el = document.createElement('div');
-    return 'transition' in el.style || 'webkitTransition' in el.style;
+    return 'transition'       in el.style ||
+           'webkitTransition' in el.style ||
+           'OTransition'      in el.style ||   /* Opera Presto (TV browsers) */
+           'MozTransition'    in el.style;
   }());
 
   var hasCssAnimation = (function () {
     var el = document.createElement('div');
-    return 'animation' in el.style || 'webkitAnimation' in el.style;
+    return 'animation'       in el.style ||
+           'webkitAnimation' in el.style ||
+           'OAnimation'      in el.style ||    /* Opera Presto (TV browsers) */
+           'MozAnimation'    in el.style;
   }());
 
   /* ── State ───────────────────────────────────────── */
@@ -290,75 +344,127 @@ body {
   }
 
   /* ── Playlist builder ────────────────────────────── */
-  function buildPlaylist(programs, menuItems) {
-    var list    = [];
-    var menuIdx = 0;
-    var count   = Math.min(programs.length, cfg.programsToShow);
+  function buildPlaylist(programs, menuItems, sponsors) {
+    /* Filter to programs within the next futureDaysLimit days */
+    var now     = new Date();
+    var todayMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    var limitMs = todayMs + cfg.futureDaysLimit * 24 * 60 * 60 * 1000;
+    programs = programs.filter(function (p) {
+      if (!p.date) return true;
+      var t = new Date(p.date).getTime();
+      return t >= todayMs && t <= limitMs;
+    });
 
-    for (var i = 0; i < count; i++) {
-      list.push({ type: 'program', data: programs[i] });
-      if (menuItems.length > 0 && (i + 1) % cfg.iceCreamInterval === 0) {
+    var count = Math.min(programs.length, cfg.programsToShow);
+    if (count === 0 && menuItems.length === 0 && sponsors.length === 0) return [];
+
+    /* How many menu slides will be interspersed among the programs? */
+    var numMenus = (count > 0 && menuItems.length > 0 && cfg.iceCreamInterval > 0)
+                   ? Math.floor(count / cfg.iceCreamInterval) : 0;
+
+    /* Number of content slots must be large enough to show every program+menu
+       AND to show every sponsor at least once per rotation.
+       Sponsors appear after EVERY content slot (program or menu). */
+    var contentSlots = Math.max(
+      count + numMenus,
+      sponsors.length,
+      count > 0 ? 1 : menuItems.length
+    );
+
+    var list = [], progIdx = 0, menuIdx = 0, sponsorIdx = 0, progSeen = 0;
+
+    for (var i = 0; i < contentSlots; i++) {
+      /* Insert a menu slide instead of a program every iceCreamInterval programs */
+      var useMenu = menuItems.length > 0 && cfg.iceCreamInterval > 0 &&
+                    progSeen > 0 && progSeen % cfg.iceCreamInterval === 0;
+
+      if (useMenu) {
+        list.push({ type: 'menu', data: menuItems[menuIdx % menuItems.length] });
+        menuIdx++;
+        progSeen = 0;
+      } else if (count > 0) {
+        list.push({ type: 'program', data: programs[progIdx % count] });
+        progIdx++;
+        progSeen++;
+      } else {
+        /* No programs at all — cycle through menu items */
         list.push({ type: 'menu', data: menuItems[menuIdx % menuItems.length] });
         menuIdx++;
       }
-    }
 
-    /* If no programs at all, cycle through entire menu */
-    if (count === 0) {
-      for (var j = 0; j < menuItems.length; j++) {
-        list.push({ type: 'menu', data: menuItems[j] });
+      /* A sponsor always follows every content slide */
+      if (sponsors.length > 0) {
+        list.push({ type: 'sponsor', data: sponsors[sponsorIdx % sponsors.length] });
+        sponsorIdx++;
       }
     }
 
     return list;
   }
 
-  /* ── Progress bar ────────────────────────────────── */
-  function resetProgress() {
-    fill.style.webkitTransition = 'none';
-    fill.style.transition       = 'none';
-    fill.style.width            = '0%';
-    /* Force reflow so the reset takes effect before we re-enable the transition */
-    void fill.offsetWidth;
-    var durSec = (cfg.slideDuration + cfg.transitionDuration) / 1000;
-    fill.style.webkitTransition = 'width ' + durSec + 's linear';
-    fill.style.transition       = 'width ' + durSec + 's linear';
-    fill.style.width            = '100%';
-  }
-
   /* ── Ken Burns reset ─────────────────────────────── */
   function restartKenBurns() {
     if (!hasCssAnimation) return;
     bg.className = bg.className.replace(/\s*animate\s*/g, ' ').trim();
-    void bg.offsetWidth; // force reflow
+    void bg.offsetWidth; // force reflow so removing the class takes effect
     bg.className += ' animate';
+  }
+
+  /* ── Progress bar ────────────────────────────────── */
+  function resetProgress() {
+    /* Reset to scaleX(0) instantly, then animate to scaleX(1).
+       Using transform instead of width avoids layout recalculation on every frame. */
+    fill.style.webkitTransition = 'none';
+    fill.style.transition       = 'none';
+    fill.style.webkitTransform  = 'scaleX(0)';
+    fill.style.transform        = 'scaleX(0)';
+    /* Force reflow so the reset takes effect before the transition is re-enabled */
+    void fill.offsetWidth;
+    var durSec = (cfg.slideDuration + cfg.transitionDuration) / 1000;
+    fill.style.webkitTransition = '-webkit-transform ' + durSec + 's linear';
+    fill.style.transition       = 'transform ' + durSec + 's linear';
+    fill.style.webkitTransform  = 'scaleX(1)';
+    fill.style.transform        = 'scaleX(1)';
   }
 
   /* ── Apply slide content ─────────────────────────── */
   function applySlide(item) {
+    var isSponsor = item.type === 'sponsor';
     var isProgram = item.type === 'program';
     var data      = item.data;
 
-    /* Background */
-    var typeClass = isProgram ? 'type-program' : 'type-menu';
-    bg.className  = typeClass;
-    if (data.imageUrl) {
-      bg.style.backgroundImage = 'url("' + data.imageUrl + '")';
+    /* ── Background ── */
+    if (isSponsor) {
+      /* Hide the ENTIRE bg-wrapper (and its GPU compositing layer).
+         Old Opera/WebKit TV browsers can paint the GPU compositing layer
+         as black when its contents are transparent, obscuring anything
+         behind it.  display:none removes the layer from rendering entirely,
+         leaving #sponsor-bg — a plain div with no transforms — to carry
+         the solid background colour reliably on any engine. */
+      bgWrapper.style.display         = 'none';
+      sponsorBg.style.backgroundColor = data.background || '#ffffff';
+      sponsorBg.style.display         = 'block';
     } else {
+      /* Restore the photo/gradient layer */
+      bgWrapper.style.display  = '';
+      sponsorBg.style.display  = 'none';
       bg.style.backgroundImage = '';
+      var typeClass = isProgram ? 'type-program' : 'type-menu';
+      bg.className  = typeClass;
+      bg.style.backgroundImage = data.imageUrl ? 'url("' + data.imageUrl + '")' : '';
     }
 
-    /* Image rotation (configured per filename in config.json imageRotations) */
+    /* ── Image rotation (program/menu only) ── */
     var rotation = 0;
-    if (data.imageUrl && cfg.imageRotations) {
+    if (!isSponsor && data.imageUrl && cfg.imageRotations) {
       var filename = decodeURIComponent(data.imageUrl.split('/').pop());
       rotation = cfg.imageRotations[filename] || 0;
     }
     if (rotation) {
-      var scale = (rotation % 180 !== 0)
+      var rscale = (rotation % 180 !== 0)
         ? Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth)
         : 1;
-      var xform = 'rotate(' + rotation + 'deg) scale(' + scale + ')';
+      var xform = 'rotate(' + rotation + 'deg) scale(' + rscale + ')';
       bgWrapper.style.webkitTransform = xform;
       bgWrapper.style.transform       = xform;
     } else {
@@ -366,33 +472,55 @@ body {
       bgWrapper.style.transform       = '';
     }
 
-    /* Badge */
-    badge.className   = 'badge ' + (isProgram ? 'program' : 'menu');
-    badge.textContent = isProgram ? 'Program' : 'Glassbar';
+    /* ── Gradient overlay: hidden for sponsor slides ── */
+    overlay.style.display = isSponsor ? 'none' : '';
 
-    /* Title */
-    titleEl.textContent = isProgram
-      ? (data.title || data.dateText || '')
-      : (data.name  || '');
+    /* ── Wordmark + counter: hidden for sponsor slides ── */
+    wordmark.style.display = isSponsor ? 'none' : '';
+    counter.style.display  = isSponsor ? 'none' : '';
 
-    /* Subtitle */
-    subtitle.className   = 'program-date';
-    if (isProgram) {
-      subtitle.textContent = formatDate(data.date, data.time);
-      subtitle.className   = 'program-date';
+    /* ── Sponsor logo ── */
+    if (isSponsor) {
+      sponsorLogo.src                  = data.imageUrl || '';
+      sponsorLogo.alt                  = data.name    || '';
+      sponsorLogoWrapper.style.display = 'block';
     } else {
-      subtitle.textContent = data.price || '';
-      subtitle.className   = 'menu-price';
+      sponsorLogoWrapper.style.display = 'none';
+      sponsorLogo.src                  = '';
     }
 
-    /* Description */
-    desc.textContent = data.description || '';
+    /* ── Content block: hidden for sponsor slides ── */
+    content.style.display = isSponsor ? 'none' : '';
 
-    /* Counter */
+    /* ── Badge / title / subtitle / description (non-sponsor only) ── */
+    if (!isSponsor) {
+      badge.className   = 'badge ' + (isProgram ? 'program' : 'menu');
+      badge.textContent = isProgram ? 'Program' : 'Glassbar';
+
+      titleEl.textContent = isProgram
+        ? (data.title || data.dateText || '')
+        : (data.name  || '');
+
+      if (isProgram) {
+        subtitle.textContent = formatDate(data.date, data.time);
+        subtitle.className   = 'program-date';
+      } else {
+        subtitle.textContent = data.price || '';
+        subtitle.className   = 'menu-price';
+      }
+
+      desc.textContent = data.description || '';
+    }
+
+    /* ── Counter ── */
     counter.textContent = (idx + 1) + ' / ' + playlist.length;
 
-    /* Ken Burns */
-    restartKenBurns();
+    /* ── Ken Burns: program/menu only ── */
+    if (!isSponsor) {
+      restartKenBurns();
+    } else {
+      bg.className = bg.className.replace(/\s*animate\s*/g, ' ').trim();
+    }
   }
 
   /* ── Show a slide ────────────────────────────────── */
@@ -422,9 +550,9 @@ body {
   }
 
   /* ── Bootstrap ───────────────────────────────────── */
-  function start(programs, menuItems) {
+  function start(programs, menuItems, sponsors) {
     loading.style.display = 'none';
-    playlist = buildPlaylist(programs, menuItems);
+    playlist = buildPlaylist(programs, menuItems, sponsors);
 
     if (playlist.length === 0) {
       loading.style.display = 'block';
@@ -439,8 +567,12 @@ body {
     timer = setTimeout(advance, cfg.slideDuration);
   }
 
-  function init(programs, menuItems) {
-    start(programs, menuItems);
+  function init(programs, menuItems, sponsors) {
+    /* Auto-refresh so the program list stays current without manual intervention */
+    if (cfg.refreshInterval > 0) {
+      setTimeout(function () { location.reload(); }, cfg.refreshInterval * 1000);
+    }
+    start(programs, menuItems, sponsors);
   }
 
   /* ── Load data files ─────────────────────────────── */
@@ -453,11 +585,12 @@ body {
 
     var programs  = [];
     var menuItems = [];
-    var pending   = 2;
+    var sponsors  = [];
+    var pending   = 3;
 
     function onDone() {
       pending--;
-      if (pending === 0) init(programs, menuItems);
+      if (pending === 0) init(programs, menuItems, sponsors);
     }
 
     loadJson('data/programs.json', function (err, data) {
@@ -468,6 +601,11 @@ body {
     loadJson('data/menu.json', function (err, data) {
       if (!err && Array.isArray(data)) menuItems = data;
       onDone();
+    });
+
+    loadJson('data/sponsors.json', function (err, data) {
+      if (!err && Array.isArray(data)) sponsors = data;
+      onDone(); /* missing file → empty array, sponsors simply won't appear */
     });
   });
 

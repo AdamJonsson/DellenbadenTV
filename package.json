@@ -5,6 +5,7 @@
   "scripts": {
     "fetch": "node scripts/fetch-data.js",
     "resize": "node scripts/resize-images.js",
+    "sponsors": "node scripts/convert-sponsors.js",
     "start": "npx serve docs -l 3000"
   },
   "dependencies": {

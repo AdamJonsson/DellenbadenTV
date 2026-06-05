@@ -1,9 +1,10 @@
 {
-  "slideDuration": 15000,
-  "transitionDuration": 1200,
+  "slideDuration": 2000,
+  "transitionDuration": 200,
   "programsToShow": 12,
   "iceCreamInterval": 4,
-  "futureDaysLimit": 120,
+  "futureDaysLimit": 21,
+  "refreshInterval": 7200,
   "imageRotations": {
     "20231119_113030060_iOS.jpg": 0,
     "jollen.jpg": -90,
