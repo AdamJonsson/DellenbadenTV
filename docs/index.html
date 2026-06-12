@@ -217,6 +217,34 @@ body {
   object-position: center;
 }
 
+/* ── Sponsor text (shown when sponsor has no logo) ──────────── */
+#sponsor-text {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  /* color and padding applied per-sponsor via JS */
+}
+#sponsor-text.visible {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+#sponsor-text span {
+  display: block;
+  font-family: Georgia, "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 10vw;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
 /* ── Error / loading state ──────────────────────────────────── */
 #loading {
   position: fixed;
@@ -244,6 +272,7 @@ body {
   <div id="sponsor-logo-wrapper">
     <img id="sponsor-logo" src="" alt=""/>
   </div>
+  <div id="sponsor-text"><span></span></div>
 
   <img id="wordmark" src="images/Dellenbaden.png" alt="Dellenbaden">
   <div id="counter"></div>
@@ -282,6 +311,8 @@ body {
   var overlay             = document.getElementById('overlay');
   var sponsorLogoWrapper  = document.getElementById('sponsor-logo-wrapper');
   var sponsorLogo         = document.getElementById('sponsor-logo');
+  var sponsorText         = document.getElementById('sponsor-text');
+  var sponsorTextSpan     = sponsorText.getElementsByTagName('span')[0];
   var wordmark            = document.getElementById('wordmark');
   var content             = document.getElementById('content');
   var badge               = document.getElementById('badge');
@@ -490,15 +521,33 @@ body {
     wordmark.style.display = isSponsor ? 'none' : '';
     counter.style.display  = isSponsor ? 'none' : '';
 
-    /* ── Sponsor logo ── */
+    /* ── Sponsor logo / text ── */
     if (isSponsor) {
-      sponsorLogo.src                   = data.imageUrl || '';
-      sponsorLogo.alt                   = data.name     || '';
-      sponsorLogoWrapper.style.padding  = data.padding  || '0';
-      sponsorLogoWrapper.style.display  = 'block';
+      var hasLogo = !!data.imageUrl;
+      /* logo */
+      sponsorLogoWrapper.style.display  = hasLogo ? 'block' : 'none';
+      if (hasLogo) {
+        sponsorLogo.src                  = data.imageUrl;
+        sponsorLogo.alt                  = data.name   || '';
+        sponsorLogoWrapper.style.padding = data.padding || '0';
+      } else {
+        sponsorLogo.src = '';
+      }
+      /* text fallback */
+      if (!hasLogo && data.text) {
+        sponsorTextSpan.textContent      = data.text;
+        sponsorText.style.color          = data.textColor || '#222222';
+        sponsorText.style.padding        = data.padding   || '10%';
+        sponsorText.className            = 'visible';
+      } else {
+        sponsorText.className            = '';
+        sponsorTextSpan.textContent      = '';
+      }
     } else {
       sponsorLogoWrapper.style.display  = 'none';
       sponsorLogo.src                   = '';
+      sponsorText.className             = '';
+      sponsorTextSpan.textContent       = '';
     }
 
     /* ── Content block: hidden for sponsor slides ── */

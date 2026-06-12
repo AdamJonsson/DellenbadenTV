@@ -1,6 +1,48 @@
 [
   {
     "name": "Sponsor",
+    "imageUrl": "images/Sponsors/BengtMattson.png",
+    "background": "#ffffff",
+    "padding": "300px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/Bobygda.jpg",
+    "background": "#ffffff",
+    "padding": "150px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/StigsTradgardar.jpg",
+    "background": "#ffffff",
+    "padding": "250px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/BjurakersBaptistforsamling.png",
+    "background": "#ffffff",
+    "padding": "150px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/RudolphisJarn.jpg",
+    "background": "#ffffff",
+    "padding": "100px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/Brolin.jpg",
+    "background": "#ffffff",
+    "padding": "200px"
+  },
+  {
+    "name": "Sponsor",
+    "imageUrl": "images/Sponsors/Hemkop.jpg",
+    "background": "#ffffff",
+    "padding": "200px"
+  },
+  {
+    "name": "Sponsor",
     "imageUrl": "images/Sponsors/Monitor.jpg",
     "background": "#ffffff",
     "padding": "200px"
@@ -46,12 +88,6 @@
     "imageUrl": "images/Sponsors/DelsboByarad.png",
     "background": "#ffffff",
     "padding": "200px"
-  },
-  {
-    "name": "Sponsor",
-    "imageUrl": "images/Sponsors/BjurakersBaptistforsamling.png",
-    "background": "#ffffff",
-    "padding": "150px"
   },
   {
     "name": "Sponsor",
