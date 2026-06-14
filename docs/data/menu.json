@@ -2,55 +2,55 @@
   {
     "name": "Jollen",
     "description": "Barnbägare med 2 små kulor glass, strössel, hallonbåtar, kex och dekoration. Du får även välja mellan en frisbee eller badboll för sommarens lek.",
-    "price": "51 kr",
+    "price": "52 kr",
     "imageUrl": "images/jollen.jpg"
   },
   {
     "name": "M/S Vega(n)",
     "description": "3 kulor ur vårt mjölkfria sortiment. Veganska chips bildar fribord, valfri topping och en vindflöjel i aktern.",
-    "price": "52 kr",
+    "price": "66 kr",
     "imageUrl": "images/Vega.jpg"
   },
   {
     "name": "Ekan",
     "description": "2 kulor glass i ett frasigt kexskrov, toppat med grädde och valfritt strössel. Åror av vaniljrån ingår.",
-    "price": "67 kr",
+    "price": "70 kr",
     "imageUrl": "images/4417f45a-6ab8-4462-a51b-fa4535e8e420.jpeg"
   },
   {
     "name": "Kyrkbåt",
     "description": "En riktig klassiker! 3 kulor glass byggs stadigt på en lång köl av banan. Högst upp toppar vi med grädde och topping. Nu är det bara att försöka ro hela skapelsen i hamn. Till din hjälp har du åror bestående av salta pinnar.",
-    "price": "86 kr",
+    "price": "88 kr",
     "imageUrl": "images/kyrkbat.JPG"
   },
   {
     "name": "Columbus",
     "description": "3 kulor glass med mjukglass, chilipulver och cayennepeppar. Vågar du testa?",
-    "price": "87 kr",
+    "price": "89 kr",
     "imageUrl": "images/23413b12-5355-47fe-8f7c-688fb95fc077.jpeg"
   },
   {
     "name": "Vraket Hannah",
     "description": "3 kulor glass på en botten av krossade digestivekex, med salta årpinnar och ett våfflat segel. Valfri topping.",
-    "price": "86 kr",
+    "price": "88 kr",
     "imageUrl": "images/hannah.jpeg"
   },
   {
     "name": "Lyxkryssare",
     "description": "10 kulor glass på en banan med grädde, topping, strössel och skorstenar av kex.",
-    "price": "186 kr",
+    "price": "190 kr",
     "imageUrl": "images/lyxkryssare.JPG"
   },
   {
     "name": "Ost-indiefarare",
     "description": "3 kulor glass med mjukglass och en riklig mängd ostkrokar.",
-    "price": "87 kr",
+    "price": "89 kr",
     "imageUrl": "images/ostidienfarare.JPG"
   },
   {
     "name": "Isbrytare",
     "description": "2 bananer och 19 kulor glass med grädde, strössel och topping. Dela med en vän – eller utmana dig själv!",
-    "price": "312 kr",
+    "price": "319 kr",
     "imageUrl": "images/isbrytare.JPG"
   }
 ]
