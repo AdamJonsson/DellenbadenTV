@@ -1,7 +1,7 @@
 [
   {
     "name": "Sponsor",
-    "imageUrl": "images/Sponsors/BengtMattson.png",
+    "imageUrl": "images/Sponsors/BengtMattson_V2.png",
     "background": "#ffffff",
     "padding": "300px"
   },
@@ -49,7 +49,7 @@
   },
   {
     "name": "Sponsor",
-    "imageUrl": "images/Sponsors/SvenskaKyrkan.png",
+    "imageUrl": "images/Sponsors/SvenskaKyrkan_V2.png",
     "background": "#ffffff",
     "padding": "200px"
   },
@@ -61,7 +61,7 @@
   },
   {
     "name": "Sponsor",
-    "imageUrl": "images/Sponsors/JDGolv.png",
+    "imageUrl": "images/Sponsors/JDGolv_V2.png",
     "background": "#ffffff",
     "padding": "200px"
   },
