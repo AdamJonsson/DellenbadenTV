@@ -192,8 +192,9 @@ body {
 }
 
 /* ── Sponsor background ─────────────────────────────────────── */
-/* Sits OUTSIDE the GPU compositing layer (#bg-wrapper) so that
-   a plain background-color is reliably painted on old WebKit. */
+/* Kept in DOM for backwards compatibility but no longer used for
+   colour — the sponsor background is now applied directly to #bg
+   inside the GPU layer so old WebKit TVs render it reliably. */
 #sponsor-bg {
   display: none;
   position: absolute;
@@ -474,22 +475,29 @@ body {
 
     /* ── Background ── */
     if (isSponsor) {
-      /* Hide the ENTIRE bg-wrapper (and its GPU compositing layer).
-         Old Opera/WebKit TV browsers can paint the GPU compositing layer
-         as black when its contents are transparent, obscuring anything
-         behind it.  display:none removes the layer from rendering entirely,
-         leaving #sponsor-bg — a plain div with no transforms — to carry
-         the solid background colour reliably on any engine. */
-      bgWrapper.style.display         = 'none';
-      sponsorBg.style.display         = 'block';
-      void sponsorBg.offsetWidth;     /* force reflow — old WebKit silently drops style
-                                         assignments on display:none elements; this flush
-                                         commits the display change before we set the color */
-      sponsorBg.style.backgroundColor = data.background || '#ffffff';
+      /* Set the sponsor colour directly on #bg (inside the GPU compositing
+         layer) rather than hiding #bg-wrapper and using a sibling div.
+         On old WebKit TV browsers (2014), two failure modes make the
+         hide-and-sibling approach unreliable:
+           1. display:none does not immediately remove a GPU compositing
+              layer (translateZ) from the compositor — the dark #bg colour
+              (#0a0e1a) can bleed through for several frames, appearing black.
+           2. backgroundColor assignments on previously-display:none elements
+              can be silently dropped before the reflow fully commits.
+         Keeping the GPU layer visible and painting the sponsor colour onto
+         #bg avoids both problems: a solid colour on the GPU layer is never
+         transparent, so it can never be rendered as black. */
+      bgWrapper.style.display  = '';
+      sponsorBg.style.display  = 'none';
+      bg.className             = '';      /* drop type-* gradient classes */
+      bg.style.backgroundImage = 'none';
+      void bg.offsetWidth;               /* reflow to commit className clear */
+      bg.style.backgroundColor = data.background || '#ffffff';
     } else {
       /* Restore the photo/gradient layer */
       bgWrapper.style.display  = '';
       sponsorBg.style.display  = 'none';
+      bg.style.backgroundColor = '';     /* clear any sponsor colour override */
       bg.style.backgroundImage = '';
       var typeClass = isProgram ? 'type-program' : 'type-menu';
       bg.className  = typeClass;
